@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AnoDetect</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #a8e063, #56ab2f);
+      color: #fff;
+      text-align: center;
+      padding: 50px;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 40px;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      background-color: #fff;
+      border: 2px solid #fff;
+      color: #56ab2f;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="file"]:hover {
+      background-color: #f0f0f0;
+    }
+
+    button {
+      background-color: #56ab2f;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #3d8e1c;
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.5em;
+    }
+
+    form {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AnoDetect</h1>
+  <p>Upload a textile image to check if it contains an anomaly or not.</p>
+  
+  <form id="upload-form" enctype="multipart/form-data">
+    <input type="file" id="image-file" name="image" accept="image/*" required><br><br>
+    <button type="submit">Upload Image</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    document.getElementById("upload-form").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent form from submitting the default way
+
+      var formData = new FormData();
+      var file = document.getElementById("image-file").files[0];
+      formData.append("image", file);
+
+      fetch("/detect-anomaly", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("result").textContent = data.result;
+      })
+      .catch(error => {
+        document.getElementById("result").textContent = "Error in processing the image.";
+        console.error("Error:", error);
+      });
+    });
+  </script>
+
+</body>
+</html>
